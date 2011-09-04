@@ -1,8 +1,6 @@
 # XPather
 
-    $ gem install xpather
-    $ irb -rxpather
-    
+    $ gem install xpather    
     $ irb -rxpather
     >> document = XPather.new("test/books.xml")
     => #<XPather:test/books.xml>
