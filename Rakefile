@@ -1,3 +1,5 @@
+require 'rake'
+require 'rake/testtask'
 require 'rake/extensiontask'
 load 'lib/xpather.rb'
 
@@ -25,3 +27,11 @@ Gem::PackageTask.new(spec) do |pkg|
 end
 
 Rake::ExtensionTask.new('xpather', spec)
+
+Rake::TestTask.new do |t|
+  t.libs << "test"
+  t.test_files = FileList['test/*_test.rb']
+  t.verbose = true
+end
+
+task :default => ["compile", "test"]
