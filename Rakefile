@@ -13,8 +13,8 @@ spec = Gem::Specification.new do |s|
 
   s.rubyforge_project = "xpather"
 
-  s.files         = ['lib/xpather.rb','ext/xpather/xpather.c']
-  s.test_files    = ['test/xpather.rb']
+  s.files         = `git ls-files`.split("\n")
+  s.test_files    = `git ls-files -- {test}/*`.split("\n")
   s.require_paths = ["lib", "ext"]
   s.extensions = %w{ext/xpather/extconf.rb}
 
