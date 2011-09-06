@@ -1,4 +1,8 @@
+#ifndef RUBY_19
+#include <ruby.h>
+#else
 #include <ruby/ruby.h>
+#endif
 
 #include <libxml/tree.h>
 #include <libxml/parser.h>
