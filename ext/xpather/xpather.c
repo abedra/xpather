@@ -42,9 +42,13 @@ VALUE search(VALUE self, VALUE xpathExpr)
   nodes = xpathObj->nodesetval;
   size = (nodes) ? nodes->nodeNr : 0;
 
-  for (i = 0; i < size; ++i) {
-    cur = nodes->nodeTab[i];
-    rb_ary_push(results, rb_str_new2(xmlNodeGetContent(cur)));
+  if (size == 1) {
+    results = rb_str_new2(xmlNodeGetContent(nodes->nodeTab[0]));
+  } else {
+    for (i = 0; i < size; ++i) {
+      cur = nodes->nodeTab[i];
+      rb_ary_push(results, rb_str_new2(xmlNodeGetContent(cur)));
+    }
   }
 
   xmlXPathFreeObject(xpathObj);

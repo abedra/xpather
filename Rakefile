@@ -1,11 +1,10 @@
 require 'rake'
 require 'rake/testtask'
 require 'rake/extensiontask'
-load 'lib/xpather.rb'
 
 spec = Gem::Specification.new do |s|
   s.name        = "xpather"
-  s.version     = XPather::VERSION
+  s.version     = "0.0.2"
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["Aaron Bedra"]
   s.email       = ["aaron@aaronbedra.com"]
