@@ -1,5 +1,5 @@
 require 'minitest/autorun'
-require 'xpather/xpather'
+require File.expand_path(File.join(File.dirname(__FILE__), '../lib/xpather'))
 
 class TestXPather < MiniTest::Unit::TestCase
   def setup
