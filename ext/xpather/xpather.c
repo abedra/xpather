@@ -15,8 +15,6 @@ VALUE search(VALUE self, VALUE xpathExpr)
 {
   VALUE results = rb_ary_new();
   xmlDocPtr doc;
-  Data_Get_Struct(self, xmlDoc, doc);
-
   xmlXPathContextPtr xpathCtx;
   xmlXPathObjectPtr xpathObj;
   xmlNodeSetPtr nodes;
@@ -24,6 +22,8 @@ VALUE search(VALUE self, VALUE xpathExpr)
   int size;
   int i;
   
+  Data_Get_Struct(self, xmlDoc, doc);
+
   xpathCtx = xmlXPathNewContext(doc);
   if (xpathCtx == NULL) {
     fprintf(stderr, "Error: unable to create new XPath context\n");
@@ -72,6 +72,7 @@ VALUE constructor(VALUE self, VALUE filename)
 {
   xmlDocPtr doc;  
   VALUE argv[1];
+  VALUE t_data;
 
   doc = xmlParseFile(StringValueCStr(filename));
   if (doc == NULL) {
@@ -79,7 +80,7 @@ VALUE constructor(VALUE self, VALUE filename)
     return -1;
   }
 
-  VALUE t_data = Data_Wrap_Struct(self, 0, xml_free, doc);
+  t_data = Data_Wrap_Struct(self, 0, xml_free, doc);
   argv[0] = filename;
   rb_obj_call_init(t_data, 1, argv);
   return t_data;
