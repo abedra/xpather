@@ -3,3 +3,4 @@ ext/xpather/mkmf.log
 ext/xpather/xpather.bundle
 ext/xpather/xpather.o
 *.gem
+lib/xpather

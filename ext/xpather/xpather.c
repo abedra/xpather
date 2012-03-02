@@ -5,8 +5,6 @@
 #include <libxml/xpath.h>
 #include <libxml/xpathInternals.h>
 
-VALUE klass;
-
 static void xml_free(void *doc) {
   xmlFreeDoc(doc);
 }
@@ -26,17 +24,15 @@ VALUE search(VALUE self, VALUE xpathExpr)
 
   xpathCtx = xmlXPathNewContext(doc);
   if (xpathCtx == NULL) {
-    fprintf(stderr, "Error: unable to create new XPath context\n");
-    xmlFreeDoc(doc);
-    return -1;
+    rb_raise(rb_eArgError, "Error: unable to create new XPath context\n");
+    return Qnil;
   }
 
   xpathObj = xmlXPathEvalExpression(StringValueCStr(xpathExpr), xpathCtx);
   if (xpathObj == NULL) {
-    fprintf(stderr, "Error: unable to evaluate xpath expression \"%s\"\n", StringValueCStr(xpathExpr));
+    rb_raise(rb_eArgError, "Error: unable to evaluate xpath expression \"%s\"\n", StringValueCStr(xpathExpr));
     xmlXPathFreeContext(xpathCtx);
-    xmlFreeDoc(doc);
-    return -1;
+    return Qnil;
   }
   
   nodes = xpathObj->nodesetval;
@@ -86,9 +82,9 @@ VALUE constructor(VALUE self, VALUE filename)
   return t_data;
 }
 
-void Init_xpather()
+void Init_xpather(void)
 {
-  klass = rb_define_class("XPather", rb_cObject);
+  VALUE klass = rb_define_class("XPather", rb_cObject);
   rb_define_singleton_method(klass, "new", constructor, 1);
   rb_define_method(klass, "initialize", initialize, 1);
   rb_define_method(klass, "filename", filename, 0);
