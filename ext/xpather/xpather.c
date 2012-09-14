@@ -40,11 +40,13 @@ VALUE search(VALUE self, VALUE xpathExpr)
 
   if (size == 1) {
     results = rb_str_new2(xmlNodeGetContent(nodes->nodeTab[0]));
-  } else {
+  } else if (size > 1) {
     for (i = 0; i < size; ++i) {
       cur = nodes->nodeTab[i];
       rb_ary_push(results, rb_str_new2(xmlNodeGetContent(cur)));
     }
+  } else {
+    return Qnil;
   }
 
   xmlXPathFreeObject(xpathObj);
