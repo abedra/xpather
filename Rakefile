@@ -10,7 +10,8 @@ file "lib/#{NAME}/#{NAME}.#{EXT}" => Dir.glob("ext/#{NAME}/*.c") do
     ruby "extconf.rb"
     sh "make"
   end
-  cp "ext/#{NAME}/#{NAME}.#{EXT}", "lib/#{NAME}"
+  FileUtils.mkdir_p("lib/#{NAME}")
+  cp "ext/#{NAME}/#{NAME}.#{EXT}", "lib/#{NAME}/#{NAME}.#{EXT}"
 end
 
 task :test => "lib/#{NAME}/#{NAME}.#{EXT}"

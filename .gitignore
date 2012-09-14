@@ -4,3 +4,4 @@ ext/xpather/xpather.bundle
 ext/xpather/xpather.o
 *.gem
 lib/xpather
+ext/xpather/xpather.so
