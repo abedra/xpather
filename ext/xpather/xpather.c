@@ -55,31 +55,27 @@ VALUE search(VALUE self, VALUE xpathExpr)
   return results;
 }
 
-static VALUE initialize(VALUE self, VALUE filename)
+static VALUE initialize(VALUE self, VALUE xmlStr)
 {
-  rb_iv_set(self, "@filename", filename);
+  rb_iv_set(self, "@xml_str", xmlStr);
   return self;
 }
 
-static VALUE filename(VALUE self)
-{
-  return rb_iv_get(self, "@filename");
-}
-
-VALUE constructor(VALUE self, VALUE filename)
+VALUE constructor(VALUE self, VALUE xmlStr)
 {
   xmlDocPtr doc;
+  const char *xmlCStr = StringValueCStr(xmlStr);
   VALUE argv[1];
   VALUE t_data;
 
-  doc = xmlParseMemory(StringValueCStr(filename), strlen(StringValueCStr(filename)));
+  doc = xmlParseMemory(xmlCStr, strlen(xmlCStr));
   if (doc == NULL) {
-    fprintf(stderr, "Error: unable to parse file \"%s\"\n", StringValueCStr(filename));
-    return -1;
+    fprintf(stderr, "Error: unable to parse xml\n");
+    return Qnil;
   }
 
   t_data = Data_Wrap_Struct(self, 0, xml_free, doc);
-  argv[0] = filename;
+  argv[0] = xmlStr;
   rb_obj_call_init(t_data, 1, argv);
   return t_data;
 }
@@ -89,6 +85,5 @@ void Init_xpather(void)
   VALUE klass = rb_define_class("XPather", rb_cObject);
   rb_define_singleton_method(klass, "new", constructor, 1);
   rb_define_method(klass, "initialize", initialize, 1);
-  rb_define_method(klass, "filename", filename, 0);
   rb_define_method(klass, "search", search, 1);
 }
