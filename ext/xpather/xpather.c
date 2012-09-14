@@ -19,7 +19,7 @@ VALUE search(VALUE self, VALUE xpathExpr)
   xmlNodePtr cur;
   int size;
   int i;
-  
+
   Data_Get_Struct(self, xmlDoc, doc);
 
   xpathCtx = xmlXPathNewContext(doc);
@@ -34,7 +34,7 @@ VALUE search(VALUE self, VALUE xpathExpr)
     xmlXPathFreeContext(xpathCtx);
     return Qnil;
   }
-  
+
   nodes = xpathObj->nodesetval;
   size = (nodes) ? nodes->nodeNr : 0;
 
@@ -49,28 +49,28 @@ VALUE search(VALUE self, VALUE xpathExpr)
 
   xmlXPathFreeObject(xpathObj);
   xmlXPathFreeContext(xpathCtx);
-  
+
   return results;
 }
 
-static VALUE initialize(VALUE self, VALUE filename) 
+static VALUE initialize(VALUE self, VALUE filename)
 {
   rb_iv_set(self, "@filename", filename);
   return self;
 }
 
-static VALUE filename(VALUE self) 
+static VALUE filename(VALUE self)
 {
   return rb_iv_get(self, "@filename");
 }
 
-VALUE constructor(VALUE self, VALUE filename) 
+VALUE constructor(VALUE self, VALUE filename)
 {
-  xmlDocPtr doc;  
+  xmlDocPtr doc;
   VALUE argv[1];
   VALUE t_data;
 
-  doc = xmlParseFile(StringValueCStr(filename));
+  doc = xmlParseMemory(StringValueCStr(filename), strlen(StringValueCStr(filename)));
   if (doc == NULL) {
     fprintf(stderr, "Error: unable to parse file \"%s\"\n", StringValueCStr(filename));
     return -1;
