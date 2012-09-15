@@ -24,4 +24,8 @@ Rake::TestTask.new do |t|
   t.libs << 'test'
 end
 
+task :console do
+  sh %"irb -I lib -r xpather.rb"
+end
+
 task :default => :test
