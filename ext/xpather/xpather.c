@@ -9,6 +9,52 @@ static void xml_free(void *doc) {
   xmlFreeDoc(doc);
 }
 
+VALUE get(VALUE self, VALUE xpathExpr)
+{
+  VALUE results = rb_ary_new();
+  xmlDocPtr doc;
+  xmlXPathContextPtr xpathCtx;
+  xmlXPathObjectPtr xpathObj;
+  xmlNodeSetPtr nodes;
+  xmlNodePtr cur;
+  int size;
+  int i;
+
+  Data_Get_Struct(self, xmlDoc, doc);
+
+  xpathCtx = xmlXPathNewContext(doc);
+  if (xpathCtx == NULL) {
+    rb_raise(rb_eArgError, "Error: unable to create new XPath context\n");
+    return Qnil;
+  }
+
+  xpathObj = xmlXPathEvalExpression(StringValueCStr(xpathExpr), xpathCtx);
+  if (xpathObj == NULL) {
+    rb_raise(rb_eArgError, "Error: unable to evaluate xpath expression \"%s\"\n", StringValueCStr(xpathExpr));
+    xmlXPathFreeContext(xpathCtx);
+    return Qnil;
+  }
+
+  nodes = xpathObj->nodesetval;
+  size = (nodes) ? nodes->nodeNr : 0;
+
+  if (size == 1) {
+    results = rb_str_new2(xmlNodeGetContent(nodes->nodeTab[0]));
+  } else if (size > 1) {
+    for (i = 0; i < size; ++i) {
+      cur = nodes->nodeTab[i];
+      rb_ary_push(results, rb_str_new2(xmlNodeGetContent(cur)));
+    }
+  } else {
+    return Qnil;
+  }
+
+  xmlXPathFreeObject(xpathObj);
+  xmlXPathFreeContext(xpathCtx);
+
+  return results;
+}
+
 VALUE search(VALUE self, VALUE xpathExpr)
 {
   VALUE results = rb_ary_new();
@@ -40,7 +86,10 @@ VALUE search(VALUE self, VALUE xpathExpr)
   size = (nodes) ? nodes->nodeNr : 0;
 
   if (size == 1) {
-    results = rb_str_new2(xmlNodeGetContent(nodes->nodeTab[0]));
+    nodeBuffer = xmlBufferCreate();
+    xmlNodeDump(nodeBuffer, doc, nodes->nodeTab[0], 0, 1);
+    results = rb_str_new2(nodeBuffer->content);
+    xmlBufferFree(nodeBuffer);
   } else if (size > 1) {
     for (i = 0; i < size; ++i) {
       nodeBuffer = xmlBufferCreate();
@@ -89,4 +138,5 @@ void Init_xpather(void)
   rb_define_singleton_method(klass, "new", constructor, 1);
   rb_define_method(klass, "initialize", initialize, 1);
   rb_define_method(klass, "search", search, 1);
+  rb_define_method(klass, "get", get, 1);
 }
