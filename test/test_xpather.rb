@@ -31,7 +31,7 @@ class TestXPather < MiniTest::Unit::TestCase
                  @document.search("/bookstore/book[3]/author"))
   end
 
-  def test_search_non_matches_return_nil
-    assert_nil(@document.search("/foo"))
+  def test_search_non_matches_return_empty_array
+    assert_empty(@document.search("/foo"))
   end
 end
