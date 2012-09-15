@@ -85,12 +85,7 @@ VALUE search(VALUE self, VALUE xpathExpr)
   nodes = xpathObj->nodesetval;
   size = (nodes) ? nodes->nodeNr : 0;
 
-  if (size == 1) {
-    nodeBuffer = xmlBufferCreate();
-    xmlNodeDump(nodeBuffer, doc, nodes->nodeTab[0], 0, 1);
-    results = rb_str_new2(nodeBuffer->content);
-    xmlBufferFree(nodeBuffer);
-  } else if (size > 1) {
+  if (size > 0) {
     for (i = 0; i < size; ++i) {
       nodeBuffer = xmlBufferCreate();
       xmlNodeDump(nodeBuffer, doc, nodes->nodeTab[i], 0, 1);

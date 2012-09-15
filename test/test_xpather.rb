@@ -21,7 +21,7 @@ class TestXPather < MiniTest::Unit::TestCase
   end
 
   def test_basic_search_one
-    assert_equal("<author>Giada De Laurentiis</author>", @document.search("/bookstore/book[1]/author"))
+    assert_equal(["<author>Giada De Laurentiis</author>"], @document.search("/bookstore/book[1]/author"))
   end
 
   def test_basic_search_collection
