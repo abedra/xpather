@@ -12,7 +12,9 @@ class TestXPather < MiniTest::Unit::TestCase
   end
 
   def test_basic_search_collection
-    assert_equal(["James McGovern", "Per Bothner", "Kurt Cagle", "James Linn", "Vaidyanathan Nagarajan"],
+
+    assert_equal(["<author>James McGovern</author>", "<author>Per Bothner</author>", "<author>Kurt Cagle</author>",
+                  "<author>James Linn</author>", "<author>Vaidyanathan Nagarajan</author>"],
                  @document.search("/bookstore/book[3]/author"))
   end
 

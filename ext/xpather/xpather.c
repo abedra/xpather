@@ -17,6 +17,7 @@ VALUE search(VALUE self, VALUE xpathExpr)
   xmlXPathObjectPtr xpathObj;
   xmlNodeSetPtr nodes;
   xmlNodePtr cur;
+  xmlBufferPtr nodeBuffer;
   int size;
   int i;
 
@@ -42,8 +43,10 @@ VALUE search(VALUE self, VALUE xpathExpr)
     results = rb_str_new2(xmlNodeGetContent(nodes->nodeTab[0]));
   } else if (size > 1) {
     for (i = 0; i < size; ++i) {
-      cur = nodes->nodeTab[i];
-      rb_ary_push(results, rb_str_new2(xmlNodeGetContent(cur)));
+      nodeBuffer = xmlBufferCreate();
+      xmlNodeDump(nodeBuffer, doc, nodes->nodeTab[i], 0, 1);
+      rb_ary_push(results, rb_str_new2(nodeBuffer->content));
+      xmlBufferFree(nodeBuffer);
     }
   } else {
     return Qnil;
