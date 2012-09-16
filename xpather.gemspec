@@ -1,6 +1,6 @@
 spec = Gem::Specification.new do |s|
   s.name              = "xpather"
-  s.version           = "0.0.9"
+  s.version           = "0.1.0"
   s.platform          = Gem::Platform::RUBY
   s.authors           = ["Aaron Bedra"]
   s.email             = ["aaron@aaronbedra.com"]
