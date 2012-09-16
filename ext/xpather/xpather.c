@@ -111,7 +111,7 @@ VALUE constructor(VALUE self, VALUE xmlStr)
   VALUE argv[1];
   VALUE t_data;
 
-  doc = xmlParseMemory(xmlCStr, strlen(xmlCStr));
+  doc = xmlParseMemory(xmlCStr, (int)strlen(xmlCStr));
   if (doc == NULL) {
     fprintf(stderr, "Error: unable to parse xml\n");
     return Qnil;
