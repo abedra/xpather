@@ -9,48 +9,58 @@ static void xml_free(void *doc) {
   xmlFreeDoc(doc);
 }
 
-VALUE get(VALUE self, VALUE xpathExpr)
-{
-  VALUE results = rb_ary_new();
-  xmlDocPtr doc;
+xmlXPathObjectPtr eval_and_search(xmlDocPtr doc, char *query) {
   xmlXPathContextPtr xpathCtx;
   xmlXPathObjectPtr xpathObj;
-  xmlNodeSetPtr nodes;
-  xmlNodePtr cur;
-  int size;
-  int i;
-
-  Data_Get_Struct(self, xmlDoc, doc);
 
   xpathCtx = xmlXPathNewContext(doc);
   if (xpathCtx == NULL) {
     rb_raise(rb_eArgError, "Error: unable to create new XPath context\n");
-    return Qnil;
+    return NULL;
   }
 
-  xpathObj = xmlXPathEvalExpression(StringValueCStr(xpathExpr), xpathCtx);
+  xpathObj = xmlXPathEvalExpression(query, xpathCtx);
   if (xpathObj == NULL) {
-    rb_raise(rb_eArgError, "Error: unable to evaluate xpath expression \"%s\"\n", StringValueCStr(xpathExpr));
+    rb_raise(rb_eArgError, "Error: unable to evaluate xpath expression \"%s\"\n", query);
     xmlXPathFreeContext(xpathCtx);
-    return Qnil;
+    return NULL;
   }
+
+  xmlXPathFreeContext(xpathCtx);
+
+  return xpathObj;
+}
+
+VALUE get(VALUE self, VALUE xpathExpr)
+{
+  VALUE results = rb_ary_new();
+  xmlDocPtr doc;
+  xmlXPathObjectPtr xpathObj;
+  xmlNodeSetPtr nodes;
+  xmlNodePtr current;
+  int size, i;
+
+  Data_Get_Struct(self, xmlDoc, doc);
+
+  xpathObj = eval_and_search(doc, StringValueCStr(xpathExpr));
+
+  if (xpathObj == NULL) { return Qnil; }
 
   nodes = xpathObj->nodesetval;
   size = (nodes) ? nodes->nodeNr : 0;
 
+  if (size == 0) { return Qnil; }
+
   if (size == 1) {
     results = rb_str_new2(xmlNodeGetContent(nodes->nodeTab[0]));
-  } else if (size > 1) {
-    for (i = 0; i < size; ++i) {
-      cur = nodes->nodeTab[i];
-      rb_ary_push(results, rb_str_new2(xmlNodeGetContent(cur)));
-    }
   } else {
-    return Qnil;
+    for (i = 0; i < size; i++) {
+      current = nodes->nodeTab[i];
+      rb_ary_push(results, rb_str_new2(xmlNodeGetContent(current)));
+    }
   }
 
   xmlXPathFreeObject(xpathObj);
-  xmlXPathFreeContext(xpathCtx);
 
   return results;
 }
@@ -59,28 +69,17 @@ VALUE search(VALUE self, VALUE xpathExpr)
 {
   VALUE results = rb_ary_new();
   xmlDocPtr doc;
-  xmlXPathContextPtr xpathCtx;
   xmlXPathObjectPtr xpathObj;
   xmlNodeSetPtr nodes;
   xmlNodePtr cur;
   xmlBufferPtr nodeBuffer;
-  int size;
-  int i;
+  int size, i;
 
   Data_Get_Struct(self, xmlDoc, doc);
 
-  xpathCtx = xmlXPathNewContext(doc);
-  if (xpathCtx == NULL) {
-    rb_raise(rb_eArgError, "Error: unable to create new XPath context\n");
-    return Qnil;
-  }
+  xpathObj = eval_and_search(doc, StringValueCStr(xpathExpr));
 
-  xpathObj = xmlXPathEvalExpression(StringValueCStr(xpathExpr), xpathCtx);
-  if (xpathObj == NULL) {
-    rb_raise(rb_eArgError, "Error: unable to evaluate xpath expression \"%s\"\n", StringValueCStr(xpathExpr));
-    xmlXPathFreeContext(xpathCtx);
-    return Qnil;
-  }
+  if (xpathObj == NULL) { return Qnil; }
 
   nodes = xpathObj->nodesetval;
   size = (nodes) ? nodes->nodeNr : 0;
@@ -93,7 +92,6 @@ VALUE search(VALUE self, VALUE xpathExpr)
   }
 
   xmlXPathFreeObject(xpathObj);
-  xmlXPathFreeContext(xpathCtx);
 
   return results;
 }
