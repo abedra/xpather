@@ -102,6 +102,11 @@ static VALUE initialize(VALUE self, VALUE xmlStr)
   return self;
 }
 
+static VALUE xml_str(VALUE self)
+{
+  return rb_iv_get(self, "@xml_str");
+}
+
 VALUE constructor(VALUE self, VALUE xmlStr)
 {
   xmlDocPtr doc;
@@ -128,4 +133,5 @@ void Init_xpather(void)
   rb_define_method(klass, "initialize", initialize, 1);
   rb_define_method(klass, "search", search, 1);
   rb_define_method(klass, "get", get, 1);
+  rb_define_method(klass, "xml_str", xml_str, 0);
 }
