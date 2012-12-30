@@ -1,4 +1,4 @@
-# XPather
+# XPather [![Build Status](https://secure.travis-ci.org/abedra/xpather.png)](http://travis-ci.org/abedra/xpather?branch=master)
 
     $ gem install xpather    
     $ irb -rxpather
