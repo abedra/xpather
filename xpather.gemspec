@@ -11,5 +11,5 @@ spec = Gem::Specification.new do |s|
   s.files             = Dir.glob('lib/**/*.rb') + Dir.glob('ext/**/*.c')
   s.extensions        = %w{ext/xpather/extconf.rb}
   s.require_paths     = ["lib", "ext"]
-  s.add_development_dependency "rake", "~>10.0"
+  s.add_development_dependency "rake", ">= 12.3.3"
 end
