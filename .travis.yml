@@ -1,3 +1,8 @@
 language: ruby
+before_install:
+  - sudo apt-get update -qq
+  - sudo apt-get install -qq libxml2 libxml2-dev
+  - gem install bundler
+  - gem update --system
 rvm:
-  - 1.9.3
+  - 2.7.1
